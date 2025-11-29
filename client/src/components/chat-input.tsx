@@ -8,7 +8,12 @@ interface ChatInputProps {
   disabled?: boolean;
 }
 
-export function ChatInput({ value, onChange, onSubmit, disabled }: ChatInputProps) {
+export function ChatInput({
+  value,
+  onChange,
+  onSubmit,
+  disabled,
+}: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -38,7 +43,7 @@ export function ChatInput({ value, onChange, onSubmit, disabled }: ChatInputProp
           placeholder="Message ChatGPT..."
           className="w-full max-h-[200px] py-3 pl-3 pr-12 bg-transparent border-none resize-none focus:ring-0 focus:outline-none text-base text-foreground placeholder:text-muted-foreground scrollbar-hide"
           rows={1}
-          style={{ height: '52px' }}
+          style={{ height: "52px" }}
         />
         <button
           onClick={onSubmit}
@@ -48,9 +53,11 @@ export function ChatInput({ value, onChange, onSubmit, disabled }: ChatInputProp
           <ArrowUp className="w-4 h-4 stroke-[3px]" />
         </button>
       </div>
+      {/* 
       <div className="mt-2 text-center text-xs text-muted-foreground">
-        AI can make mistakes. Consider checking important information.
-      </div>
+         AI can make mistakes. Consider checking important information.
+        
+      </div>  */}
     </div>
   );
 }

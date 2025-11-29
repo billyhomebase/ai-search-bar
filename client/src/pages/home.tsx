@@ -5,7 +5,14 @@ import { Sparkles, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
-  const { messages, isThinking, inputText, setInputText, sendMessage, clearChat } = useChat();
+  const {
+    messages,
+    isThinking,
+    inputText,
+    setInputText,
+    sendMessage,
+    clearChat,
+  } = useChat();
 
   const handleSubmit = () => {
     sendMessage(inputText);
@@ -13,12 +20,14 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden font-sans">
-      {/* Header */}
+      {/* Header 
       <header className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-background/80 backdrop-blur-sm border-b border-border/50">
         <div className="flex items-center space-x-2 font-semibold text-lg text-primary cursor-pointer hover:opacity-80 transition-opacity">
           <Sparkles className="w-5 h-5" />
           <span>ChatGPT</span>
-          <span className="text-xs font-normal text-muted-foreground px-2 py-0.5 bg-secondary rounded-full">Beta</span>
+          <span className="text-xs font-normal text-muted-foreground px-2 py-0.5 bg-secondary rounded-full">
+            Beta
+          </span>
         </div>
         <button
           onClick={clearChat}
@@ -28,7 +37,7 @@ export default function Home() {
           <RefreshCw className="w-4 h-4" />
           <span className="hidden sm:inline">New Chat</span>
         </button>
-      </header>
+      </header>*/}
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto scroll-smooth relative">
@@ -43,23 +52,22 @@ export default function Home() {
               >
                 <Sparkles className="w-8 h-8 text-primary" />
               </motion.div>
-              <h1 className="text-3xl font-bold tracking-tight">How can I help you today?</h1>
-              
+              <h1 className="text-3xl font-bold tracking-tight">
+                How can I help you today?
+              </h1>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl w-full mt-8">
-                {[
-                  "Explain quantum computing in simple terms",
-                  "Suggest a creative birthday gift for a hiker",
-                  "How do I make an HTTP request in Javascript?",
-                  "Write a short poem about the ocean"
-                ].map((suggestion, i) => (
-                  <button
-                    key={i}
-                    onClick={() => sendMessage(suggestion)}
-                    className="text-left p-4 rounded-xl border border-border/60 hover:bg-secondary/50 hover:border-border transition-all text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
+                {["Suggest a creative birthday gift for a hiker"].map(
+                  (suggestion, i) => (
+                    <button
+                      key={i}
+                      onClick={() => sendMessage(suggestion)}
+                      className="text-left p-4 rounded-xl border border-border/60 hover:bg-secondary/50 hover:border-border transition-all text-sm text-muted-foreground hover:text-foreground"
+                    >
+                      {suggestion}
+                    </button>
+                  ),
+                )}
               </div>
             </div>
           ) : (
@@ -76,7 +84,7 @@ export default function Home() {
           value={inputText}
           onChange={setInputText}
           onSubmit={handleSubmit}
-          disabled={isThinking && !messages.some(m => m.isStreaming)}
+          disabled={isThinking && !messages.some((m) => m.isStreaming)}
         />
       </div>
     </div>
