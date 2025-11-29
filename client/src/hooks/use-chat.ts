@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 
 export interface Message {
   id: string;
@@ -6,14 +6,6 @@ export interface Message {
   content: string;
   isStreaming?: boolean;
 }
-
-const SAMPLE_RESPONSES = [
-  "I can certainly help with that. Based on your request, here is a detailed breakdown of the information you're looking for...",
-  "That's an interesting question. The concept typically involves several key principles: first, efficiency in design; second, clarity of communication; and third, robustness of implementation.",
-  "Here are the top results I found for your query:\n\n1. **React**: A JavaScript library for building user interfaces.\n2. **Tailwind CSS**: A utility-first CSS framework.\n3. **Framer Motion**: A production-ready motion library for React.",
-  "To solve this problem, we need to look at the underlying data structures. If we assume a linear time complexity, the solution becomes much more straightforward.",
-  "I've analyzed the data and found a few trends that might be relevant to your project. Specifically, the user engagement metrics have shown a 15% increase over the last quarter."
-];
 
 export function useChat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -30,51 +22,93 @@ export function useChat() {
     return newMessage.id;
   };
 
-  const simulateResponse = async () => {
+  const streamResponse = async (conversationHistory: Array<{role: string, content: string}>) => {
     setIsThinking(true);
     
-    // Simulate network delay / "thinking" time
-    const thinkingTime = 1500 + Math.random() * 2000;
-    await new Promise(resolve => setTimeout(resolve, thinkingTime));
-    
-    setIsThinking(false);
-    
-    // Pick a random response
-    const responseText = SAMPLE_RESPONSES[Math.floor(Math.random() * SAMPLE_RESPONSES.length)];
-    
-    // Create placeholder message for streaming
-    const msgId = Math.random().toString(36).substring(7);
-    setMessages(prev => [...prev, {
-      id: msgId,
-      role: 'assistant',
-      content: '',
-      isStreaming: true
-    }]);
-    
-    // Stream character by character
-    let currentText = "";
-    const chars = responseText.split("");
-    
-    for (let i = 0; i < chars.length; i++) {
-      currentText += chars[i];
-      
-      // Update the message content
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages: conversationHistory }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response');
+      }
+
+      setIsThinking(false);
+
+      const msgId = Math.random().toString(36).substring(7);
+      setMessages(prev => [...prev, {
+        id: msgId,
+        role: 'assistant',
+        content: '',
+        isStreaming: true
+      }]);
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let accumulatedContent = '';
+
+      if (!reader) {
+        throw new Error('No reader available');
+      }
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') {
+              setMessages(prev => prev.map(msg => 
+                msg.id === msgId 
+                  ? { ...msg, isStreaming: false } 
+                  : msg
+              ));
+              return;
+            }
+
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.content) {
+                accumulatedContent += parsed.content;
+                setMessages(prev => prev.map(msg => 
+                  msg.id === msgId 
+                    ? { ...msg, content: accumulatedContent } 
+                    : msg
+                ));
+              }
+            } catch (e) {
+              // Skip malformed JSON
+            }
+          }
+        }
+      }
+
       setMessages(prev => prev.map(msg => 
         msg.id === msgId 
-          ? { ...msg, content: currentText } 
+          ? { ...msg, isStreaming: false } 
           : msg
       ));
+    } catch (error) {
+      console.error('Chat error:', error);
+      setIsThinking(false);
       
-      // Random typing delay
-      await new Promise(resolve => setTimeout(resolve, 15 + Math.random() * 30));
+      const errorMsgId = Math.random().toString(36).substring(7);
+      setMessages(prev => [...prev, {
+        id: errorMsgId,
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please try again.',
+        isStreaming: false
+      }]);
     }
-    
-    // Finish streaming
-    setMessages(prev => prev.map(msg => 
-      msg.id === msgId 
-        ? { ...msg, isStreaming: false } 
-        : msg
-    ));
   };
 
   const sendMessage = async (text: string) => {
@@ -83,7 +117,12 @@ export function useChat() {
     addMessage('user', text);
     setInputText("");
     
-    await simulateResponse();
+    const conversationHistory = [
+      ...messages.map(m => ({ role: m.role, content: m.content })),
+      { role: 'user' as const, content: text }
+    ];
+    
+    await streamResponse(conversationHistory);
   };
 
   const clearChat = () => {
