@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { streamChatCompletion, type ChatMessage } from "./openai";
+import { streamChatCompletion, type ChatMessage } from "./openaiService";
 
 export async function registerRoutes(
   httpServer: Server,
