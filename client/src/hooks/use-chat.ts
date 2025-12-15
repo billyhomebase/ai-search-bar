@@ -26,8 +26,10 @@ export function useChat() {
     setIsThinking(true);
     
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
+      //const response = await fetch('/api/chat', {
+      const response = await fetch('/api/chatNews', {
+        
+          method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },

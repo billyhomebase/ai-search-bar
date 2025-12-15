@@ -44,31 +44,13 @@ export default function Home() {
         <div className="min-h-full flex flex-col">
           {messages.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-6">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4"
-              >
-                <Sparkles className="w-8 h-8 text-primary" />
-              </motion.div>
+              
+              <img className="w-12 h-12" src="https://www.sjp.co.uk/sites/sjp-corp/files/logos/SJP_Monogram_RGB_NAVY_0.svg" alt="St. James’s Place" title="St. James’s Place"/>
+
               <h1 className="text-3xl font-bold tracking-tight">
                 How can I help you today?
               </h1>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl w-full mt-8">
-                {["Suggest a creative birthday gift for a hiker"].map(
-                  (suggestion, i) => (
-                    <button
-                      key={i}
-                      onClick={() => sendMessage(suggestion)}
-                      className="text-left p-4 rounded-xl border border-border/60 hover:bg-secondary/50 hover:border-border transition-all text-sm text-muted-foreground hover:text-foreground"
-                    >
-                      {suggestion}
-                    </button>
-                  ),
-                )}
-              </div>
+              
             </div>
           ) : (
             <div className="flex-1 py-10">

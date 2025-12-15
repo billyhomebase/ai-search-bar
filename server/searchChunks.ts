@@ -125,8 +125,7 @@ async function embedQuery(question: string): Promise<number[]> {
  * @param topK - number of chunks to return
  */
 export async function searchChunks(
-  question: string,
-  topK = 8
+  question: string
 ): Promise<ScoredChunk[]> {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error("OPENAI_API_KEY is not set");
@@ -137,6 +136,7 @@ export async function searchChunks(
   }
 
   const queryEmbedding = await embedQuery(question);
+  const topK= 8;
 
   // Score all chunks
   const scored: ScoredChunk[] = INDEX.map((doc) => ({

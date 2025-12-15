@@ -40,7 +40,7 @@ export function ChatInput({
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={disabled}
-          placeholder="Message ChatGPT..."
+          placeholder="Explore our news & research..."
           className="w-full max-h-[200px] py-3 pl-3 pr-12 bg-transparent border-none resize-none focus:ring-0 focus:outline-none text-base text-foreground placeholder:text-muted-foreground scrollbar-hide"
           rows={1}
           style={{ height: "52px" }}

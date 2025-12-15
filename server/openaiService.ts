@@ -11,7 +11,6 @@ export interface ChatMessage {
 }
 
 export async function streamChatCompletion(
-  
   messages: ChatMessage[],
   onChunk: (text: string) => void
 ): Promise<void> {
@@ -28,7 +27,4 @@ export async function streamChatCompletion(
       onChunk(content);
     }
   }
-
-  console.log("openai token");
-  console.log(openai);
 }
